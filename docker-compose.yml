@@ -1,0 +1,56 @@
+version: "2"
+services:
+  mqttbroker:
+    image: eclipse-mosquitto:1.4.10
+    ports:
+      - "1883:1883"
+  redis:
+    image: redis:3.2.8
+  postgres:
+    image: postgres:9.6.2
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=loraserver
+      - POSTGRES_PASSWORD=dbpassword
+      - POSTGRES_DB=loraserver
+  loraserver:
+    image: ceratop/loraserver
+    ports:
+      - "8000:8000"
+    command: dockerize -wait tcp://postgres:5432 -wait tcp://mqttbroker:1883 -wait tcp://redis:6379 -timeout 10s ./loraserver
+    environment:
+      - NET_ID=010203
+      - BAND=EU_863_870
+      - BIND=0.0.0.0:8000
+      - REDIS_URL=redis://redis:6379
+      - GW_MQTT_SERVER=tcp://mqttbroker:1883
+      - AS_SERVER=loraappserver:8001
+      - DEDUPLICATION_DELAY=200ms
+      - GET_DOWNLINK_DATA_DELAY=100ms
+    links:
+      - mqttbroker
+      - redis
+      - postgres
+  loraappserver:
+    image: ceratop/lora-app-server
+    ports:
+      - "8080:8080"
+      - "8001:8001"
+    command: dockerize -wait tcp://postgres:5432 -wait tcp://mqttbroker:1883 -wait tcp://redis:6379 -timeout 10s ./lora-app-server
+    environment:
+      - POSTGRES_DSN=postgres://loraserver:dbpassword@postgres:5432/loraserver?sslmode=disable
+      - DB_AUTOMIGRATE=true
+      - REDIS_URL=redis://redis:6379
+      - MQTT_SERVER=tcp://mqttbroker:1883
+      - BIND=0.0.0.0:8001
+      - HTTP_BIND=0.0.0.0:8080
+      - HTTP_TLS_CERT=/home/root/certs/default.crt
+      - HTTP_TLS_KEY=/home/root/certs/default.key
+      - JWT_SECRET=Gb11Z5i9q7NoF39M+CZ7OnFGkWz2jkR+BEJY1e//ZVQ=
+      - NS_SERVER=loraserver:8000
+    links:
+      - mqttbroker
+      - redis
+      - postgres
+      - loraserver
