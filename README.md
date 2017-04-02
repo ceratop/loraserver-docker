@@ -1,6 +1,13 @@
 # Docker Images for [LoRa Server](https://github.com/brocaar/loraserver) and [LoRa App Server](https://github.com/brocaar/lora-app-server)
 
-LoRa Server - open source LoRaWAN network-server created by [Orne Brocaar](http://www.brocaar.com/)
+LoRa Server - open source LoRaWAN network-server created by [Orne Brocaar](http://www.brocaar.com/).
+
+Supported versions:
+
+ * v1.0.0
+   
+   * LoRa Server: 0.16.1
+   * LoRa App Server: 0.7.2
 
 ## Deploy
 
@@ -8,6 +15,8 @@ LoRa Server - open source LoRaWAN network-server created by [Orne Brocaar](http:
 
     ```
     git clone https://github.com/ceratop/loraserver-docker.git
+
+    git checkout v1.0.0
     ```
 1. Change the default configuration and generate certificates _(optional)_:
 

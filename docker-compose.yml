@@ -21,7 +21,7 @@ services:
       - LORAAPPSERVER_DB_USER=loraserver_as
       - LORAAPPSERVER_DB_PASSWORD=dbpassword
   loraserver:
-    image: ceratop/loraserver
+    image: ceratop/loraserver:0.16.1
     environment:
       - NET_ID=010203
       - BAND=EU_863_870
@@ -40,7 +40,7 @@ services:
       - redis
       - postgres
   loraappserver:
-    image: ceratop/lora-app-server
+    image: ceratop/lora-app-server:0.7.2
     ports:
       - "443:8080"
     volumes:
