@@ -8,22 +8,26 @@ services:
     image: redis:3.2.8
   postgres:
     image: postgres:9.6.2
-    ports:
-      - "5432:5432"
+    volumes:
+      - "./postgres/init-loraserver-db.sh:/docker-entrypoint-initdb.d/init-loraserver-db.sh"
+      - "./postgres/init-loraappserver-db.sh:/docker-entrypoint-initdb.d/init-loraappserver-db.sh"
     environment:
-      - POSTGRES_USER=loraserver
-      - POSTGRES_PASSWORD=dbpassword
-      - POSTGRES_DB=loraserver
+      - POSTGRES_PASSWORD=mysecretpassword
+      - LORASERVER_DB_NAME=loraserver_ns
+      - LORASERVER_DB_USER=loraserver_ns
+      - LORASERVER_DB_PASSWORD=dbpassword
+      - LORAAPPSERVER_DB_NAME=loraserver_as
+      - LORAAPPSERVER_DB_USER=loraserver_as
+      - LORAAPPSERVER_DB_PASSWORD=dbpassword
   loraserver:
     image: ceratop/loraserver
-    ports:
-      - "8000:8000"
-    command: dockerize -wait tcp://postgres:5432 -wait tcp://mqttbroker:1883 -wait tcp://redis:6379 -timeout 10s ./loraserver
     environment:
       - NET_ID=010203
       - BAND=EU_863_870
       - BIND=0.0.0.0:8000
       - REDIS_URL=redis://redis:6379
+      - POSTGRES_DSN=postgres://loraserver_ns:dbpassword@postgres:5432/loraserver_ns?sslmode=disable
+      - DB_AUTOMIGRATE=true
       - GW_MQTT_SERVER=tcp://mqttbroker:1883
       - AS_SERVER=loraappserver:8001
       - DEDUPLICATION_DELAY=200ms
@@ -32,14 +36,19 @@ services:
       - mqttbroker
       - redis
       - postgres
+    depends_on:
+      - mqttbroker
+      - redis
+      - postgres
   loraappserver:
     image: ceratop/lora-app-server
     ports:
       - "8080:8080"
       - "8001:8001"
-    command: dockerize -wait tcp://postgres:5432 -wait tcp://mqttbroker:1883 -wait tcp://redis:6379 -timeout 10s ./lora-app-server
+    volumes:
+      - "./lora-app-server/certs:/home/root/certs"
     environment:
-      - POSTGRES_DSN=postgres://loraserver:dbpassword@postgres:5432/loraserver?sslmode=disable
+      - POSTGRES_DSN=postgres://loraserver_as:dbpassword@postgres:5432/loraserver_as?sslmode=disable
       - DB_AUTOMIGRATE=true
       - REDIS_URL=redis://redis:6379
       - MQTT_SERVER=tcp://mqttbroker:1883
@@ -50,6 +59,11 @@ services:
       - JWT_SECRET=Gb11Z5i9q7NoF39M+CZ7OnFGkWz2jkR+BEJY1e//ZVQ=
       - NS_SERVER=loraserver:8000
     links:
+      - mqttbroker
+      - redis
+      - postgres
+      - loraserver
+    depends_on:
       - mqttbroker
       - redis
       - postgres
