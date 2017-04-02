@@ -11,6 +11,7 @@ services:
     volumes:
       - "./postgres/init-loraserver-db.sh:/docker-entrypoint-initdb.d/init-loraserver-db.sh"
       - "./postgres/init-loraappserver-db.sh:/docker-entrypoint-initdb.d/init-loraappserver-db.sh"
+      - "./postgres/data:/var/lib/postgresql/data"
     environment:
       - POSTGRES_PASSWORD=mysecretpassword
       - LORASERVER_DB_NAME=loraserver_ns
