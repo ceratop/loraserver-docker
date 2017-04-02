@@ -31,8 +31,6 @@ services:
       - DB_AUTOMIGRATE=true
       - GW_MQTT_SERVER=tcp://mqttbroker:1883
       - AS_SERVER=loraappserver:8001
-      - DEDUPLICATION_DELAY=200ms
-      - GET_DOWNLINK_DATA_DELAY=100ms
     links:
       - mqttbroker
       - redis
@@ -44,8 +42,7 @@ services:
   loraappserver:
     image: ceratop/lora-app-server
     ports:
-      - "8080:8080"
-      - "8001:8001"
+      - "443:8080"
     volumes:
       - "./lora-app-server/certs:/home/root/certs"
     environment:
