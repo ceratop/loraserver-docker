@@ -4,6 +4,11 @@ LoRa Server - open source LoRaWAN network-server created by [Orne Brocaar](http:
 
 Supported versions:
 
+ * v1.1.0
+
+   * LoRa Server: 0.19.1
+   * LoRa App Server: 0.10.1
+
  * v1.0.0
    
    * LoRa Server: 0.16.1
@@ -16,7 +21,7 @@ Supported versions:
     ```
     git clone https://github.com/ceratop/loraserver-docker.git
 
-    git checkout v1.0.0
+    git checkout v1.1.0
     ```
 1. Change the default configuration and generate certificates _(optional)_:
 
