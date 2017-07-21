@@ -68,6 +68,8 @@ services:
       - loraserver
   loragatewaybridge:
     image: rodrigopex/lora-gateway-bridge:2.1.5
+    ports:
+      - "1700:1700"
     environment:
       - MQTT_SERVER=tcp://mqttbroker:1883
     links:
