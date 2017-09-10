@@ -1,5 +1,9 @@
 # Docker Images for [LoRa Server](https://github.com/brocaar/loraserver) and [LoRa App Server](https://github.com/brocaar/lora-app-server)
 
+> WARNING:
+>
+> The repository is not maintained anymore. Please, use [official Docker images](https://docs.loraserver.io/install/docker/) from the LoRa Server project.
+
 LoRa Server - open source LoRaWAN network-server created by [Orne Brocaar](http://www.brocaar.com/).
 
 Supported versions:
