@@ -21,16 +21,17 @@ services:
       - LORAAPPSERVER_DB_USER=loraserver_as
       - LORAAPPSERVER_DB_PASSWORD=dbpassword
   loraserver:
-    image: ceratop/loraserver:0.19.1
+    image: rodrigopex/loraserver:0.19.1
     environment:
       - NET_ID=010203
-      - BAND=EU_863_870
+      - BAND=US_902_928
       - BIND=0.0.0.0:8000
       - REDIS_URL=redis://redis:6379
       - POSTGRES_DSN=postgres://loraserver_ns:dbpassword@postgres:5432/loraserver_ns?sslmode=disable
       - DB_AUTOMIGRATE=true
       - GW_MQTT_SERVER=tcp://mqttbroker:1883
       - AS_SERVER=loraappserver:8001
+      - LOG_NODE_FRAMES=true
     links:
       - mqttbroker
       - redis
@@ -40,7 +41,7 @@ services:
       - redis
       - postgres
   loraappserver:
-    image: ceratop/lora-app-server:0.10.1
+    image: rodrigopex/lora-app-server:0.12.0
     ports:
       - "443:8080"
     volumes:
@@ -66,3 +67,13 @@ services:
       - redis
       - postgres
       - loraserver
+  loragatewaybridge:
+    image: rodrigopex/lora-gateway-bridge:2.1.5
+    ports:
+      - "1700:1700/udp"
+    environment:
+      - MQTT_SERVER=tcp://mqttbroker:1883
+    links:
+      - mqttbroker
+    depends_on:
+      - mqttbroker
