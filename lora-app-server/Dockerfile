@@ -10,4 +10,3 @@ EXPOSE 8080
 EXPOSE 8001
 
 CMD ./lora-app-server
-

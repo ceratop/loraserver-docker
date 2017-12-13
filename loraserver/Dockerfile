@@ -8,4 +8,4 @@ ADD https://github.com/brocaar/loraserver/releases/download/${LORASERVER_VERSION
 
 EXPOSE 8000
 
-CMD ./loraserver
+CMD ./loraserver --timezone America/Maceio
